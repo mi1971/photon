@@ -104,7 +104,8 @@ export default {
   name: 'income',
   data () {
     return {
-        startDate: new Date('July 1, 2016'),
+        startDate:"2016-07-01",
+        // endDate:(new Date()).toString("dd/mm/yy"),
       amount: 400000,
       rate: 4.0,
       years: 30,
@@ -115,8 +116,8 @@ export default {
     }
   },
   watch: {
-    amount: function(val, oldVal) {
-      this.recalculate();
+    startDate: function(val, oldVal) {
+      console.log(val);
     },
     rate: function(val, oldVal) {
       this.recalculate();
