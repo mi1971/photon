@@ -1,0 +1,83 @@
+<template>
+  <div id="app">
+    <div class="phone-viewport">
+      <md-toolbar>
+        <md-button class="md-icon-button" @click.native="toggleLeftSidenav">
+          <md-icon>menu</md-icon>
+        </md-button>
+
+        <h2 class="md-title">Calculators</h2>
+      </md-toolbar>
+
+      <md-sidenav class="md-left md-sidenav" ref="leftSidenav" @click.native="toggleLeftSidenav">
+        <md-toolbar class="md-medium">
+          <div class="md-toolbar-container">
+            <router-link to="/" class="white">  
+            <md-button class="md-icon-button">
+                <md-icon>home</md-icon>
+            </md-button> 
+            </router-link>
+            <h3 class="md-title">Choosa a Calculator</h3>
+          </div>
+        </md-toolbar>
+        <br/>
+        <router-link class='router-link' to="/repayments">Repayments</router-link>
+        <router-link class='router-link' to="/compare">Compare Loans</router-link>
+        <router-link class='router-link' to="/income">Income</router-link>
+
+      </md-sidenav>
+      </div>
+      <router-view class="router-view"></router-view>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'app',
+  methods: {
+    toggleLeftSidenav() {
+      this.$refs.leftSidenav.toggle();
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+/*
+a:hover{
+  text-decoration: none!important;
+}*/
+
+.router-view{
+  margin:30px;
+}
+
+.router-link {
+  display: block;
+  padding:13px;
+  padding-left:25px;
+  font-size:16px;
+  color: #2E2E2E!important;
+}
+
+.router-link:hover {
+  text-decoration: none!important;
+  background-color: #D8D8D8;
+}
+
+
+.md-sidenav {
+  text-align: left;
+}
+
+.white{
+    color:white!important;
+}
+
+</style>
