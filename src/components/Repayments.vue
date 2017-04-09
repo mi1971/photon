@@ -100,6 +100,8 @@
                     </td>
                 </tr>
             </table>
+
+            Interest Only {{interestPayment | currency('',0)}}
                
                
 
@@ -127,6 +129,12 @@ export default {
       future:0,
       frequency:"1",
       target:"Repayment"
+    }
+  },
+  computed:{
+    interestPayment: function(){
+        let pmt = NumberHelpers.monthlyIO(this.amount, this.rate);
+        return pmt / this.frequency;
     }
   },
   watch: {
@@ -216,6 +224,10 @@ a {
   color: #42b983;
 }
 
+.md-input-container {
+    margin: 2px 0 4px;
+}
+
 .md-input-disabled > input{
     color:black!important;
     font-weight:600;
@@ -225,6 +237,7 @@ a {
 .md-input-container::after{
     background-image:none!important;
 }
+
 
 
 
