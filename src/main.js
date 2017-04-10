@@ -6,6 +6,7 @@ import router from './router'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 import Vue2Filters from 'vue2-filters'
+
  
 Vue.use(Vue2Filters)
 
