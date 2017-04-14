@@ -1,8 +1,8 @@
 <template>
   <div>
-      <md-layout md-gutter="16">
+      <md-layout>
             <!--Left Column-->
-            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="33" md-flex-large="25" style="margin-bottom:20px">
+            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="33" md-flex-large="25" style="margin-bottom:20px;padding:20px;">
 
                         <md-input-container>
                             <label>Start Date</label>
@@ -20,11 +20,11 @@
             </md-layout>
 
             <!--Right Column-->
-            <!--<md-layout md-column md-gutter="16">-->
+            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="66" md-flex-large="75" style="margin-bottom:20px;padding:20px;">
             <div>
                 There are {{days}} days between {{startString}} and {{endString}}.<br/>Annualised income is <strong>{{annualised | currency('$',0) }}</strong>
-            <!--</md-layout>   -->
             </div>
+            </md-layout>   
         </md-layout>     
   </div>
 </template>

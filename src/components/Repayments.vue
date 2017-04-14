@@ -1,11 +1,11 @@
 <template>
   <div>
-      <md-layout md-gutter="16">
+      <md-layout>
             <!--Left Column-->
             <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="33" md-flex-large="25" style="margin-bottom:20px">
             <table>
                 <tr>
-                    <td>
+                    <td style="width:100%">
                         <md-input-container>
                             <label>Amount</label>
                             <md-input type="number" v-model="amount" :disabled="target == 'Amount' ? true : false"></md-input>
@@ -100,7 +100,7 @@
                     </td>
                 </tr>
             </table>
-
+            <br/>    
             Interest Only {{interestPayment | currency('',0)}}
                
                
