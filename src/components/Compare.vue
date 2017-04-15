@@ -5,7 +5,7 @@
         <md-layout md-row>
 
             <!--Left Column-->
-            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="33" md-flex-large="25" style="margin-bottom:20px;padding:20px">
+            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="50" md-flex-large="25" style="margin-bottom:20px;padding:20px">
 
                 <table style="width:100%">
                     <tr>
@@ -48,25 +48,39 @@
                     </tr>
                 </table>
 
-                <md-input-container>
-                    <label>Compare Over</label>
-                    <md-input type="number" v-model="compareYears"></md-input>
-                    <span class="suffix">years</span>
-                </md-input-container>
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <md-input-container>
+                                <label>Compare Over</label>
+                                <md-input type="number" v-model="compareYears"></md-input>
+                                <span class="suffix">years</span>
+                            </md-input-container>      
+                        </td>
+                        <td style="padding-top:15px;width:15px">
+                            
+                        </td>
+                        <td>
+                            <md-input-container>
+                                <label>Total Term</label>
+                                <md-input type="number" v-model="termYears"></md-input>
+                                <span class="suffix">years</span>
+                            </md-input-container>
+                        </td>
+                    </tr>
+                </table>
+
+
                              
-                <md-input-container>
-                    <label>Total Term</label>
-                    <md-input type="number" v-model="termYears"></md-input>
-                    <span class="suffix">years</span>
-                </md-input-container>
+
     
             </md-layout>
 
             <!--Right Column-->
-            <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="66" md-flex-large="75" style="padding:20px;">
+            <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="50" md-flex-large="75" style="padding:20px;">
                 <div>
                     Comparing {{previousAmount | currency('',0)}} @ <strong>{{previousRate}}%</strong> with {{newAmount | currency('',0)}} @ <strong>{{newRate}}%</strong> over {{compareYears}} years
-                    <hr/><br>
+                    <br/><br/>
                     Repayments at {{previousRate}}% are <strong>{{previousMonthly | currency('',0)}}</strong><br><br>
                     Repayments at {{newRate}}% are <strong>{{newMonthly | currency('',0)}}</strong>, which is {{(previousMonthly - newMonthly) | currency('',0)}} cheaper. <br/><br/>
                     This compounds, so if the exact same monthly payment of {{previousMonthly | currency('',0)}} was made on both, the balance over {{compareYears}} years would come down to {{previousFutureValue | currency('',0)}} on the previous rate and {{newFutureValue | currency('',0)}} on the new one. <br/><br/>

@@ -2,29 +2,111 @@
   <div>
       <md-layout>
             <!--Left Column-->
-            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="33" md-flex-large="25" style="margin-bottom:20px;padding:20px;">
+            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100" md-flex-large="30" style="margin-bottom:20px;padding:10px;">
 
+                        <table style="width:100%">
+                <tr>
+                    <td colspan="3"><strong>YTD INCOME</strong></td>
+                </tr>
+                <tr>
+                    <td>
                         <md-input-container>
                             <label>Start Date</label>
                             <md-input type="date" v-model="startDate"></md-input>
-
                         </md-input-container>
+                    </td>
+                    <td><div style="width:40px">to</div></td>
+                    <td>
                         <md-input-container>
                             <label>End Date</label>
                             <md-input type="date" v-model="endDate"></md-input>
-                        </md-input-container>                        
+                        </md-input-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <md-input-container>
                             <label>YTD Income</label>
                             <md-input type="number" v-model="ytd"></md-input>
-                        </md-input-container>                        
+                        </md-input-container>
+                    </td>
+                    <td></td>
+                    <td>
+                        <md-input-container>
+                            <label for="employmentType">Employment Type</label>
+                            <md-select name="employmentType" id="employmentType" v-model="employmentType">
+                                <md-option value="c">Casual</md-option>
+                                <md-option value="p">Part Time</md-option>
+                                <md-option value="f">Full Time</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>BASE INCOME</strong></td>
+                </tr>
+                <tr>
+                    <td>
+                        <md-input-container>
+                            <label>Base Earnings</label>
+                            <md-input type="number" v-model="base"></md-input>
+                        </md-input-container>
+                    </td>
+                    <td> per </td>
+                    <td>
+                        <md-input-container>
+                            <label for="payPeriod">Pay Period</label>
+                            <md-select name="payPeriod" id="payPeriod" v-model="payPeriod">
+                                <md-option value="52">Week</md-option>
+                                <md-option value="26">Fortnight</md-option>
+                                <md-option value="12">Month</md-option>
+                                <md-option value="1">Year</md-option>
+                            </md-select>
+                        </md-input-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>LAST YEAR</strong></td>
+ 
+                </tr>
+                <tr>
+                    <td>
+                                                <md-input-container>
+                            <label>Last Year Income</label>
+                            <md-input type="number" v-model="last"></md-input>
+                        </md-input-container>
+                    </td>
+                    <td>over</td>
+                    <td>
+                                    <md-input-container>
+                            <label>Months</label>
+                            <md-input type="number" v-model="lastMonths"></md-input>
+                        </md-input-container>
+                    </td>
+                </tr>
+            </table>
+
+        
+
+
+
+
+
+
             </md-layout>
 
             <!--Right Column-->
-            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="66" md-flex-large="75" style="margin-bottom:20px;padding:20px;">
-            <div>
-                There are {{days}} days between {{startString}} and {{endString}}.<br/>Annualised income is <strong>{{annualised | currency('$',0) }}</strong>
-            </div>
-            </md-layout>   
+            <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100" md-flex-large="70" style="margin-bottom:20px;padding:20px;">
+                <div>
+                    There are {{days}} days between {{startString}} and {{endString}}.<br/>Annualised income is <strong>{{annualised | currency('$',0) }}</strong>
+                </div>
+
+                <div v-if="base">
+                    <br> Base income is <strong>{{base * payPeriod | currency('$',0)}}</strong>
+                    <br> Overtime/Allowances will be <strong>{{annualised - (base * payPeriod) | currency('$',0) }}</strong>
+                </div>
+
+            </md-layout>
         </md-layout>     
   </div>
 </template>
@@ -40,7 +122,12 @@ export default {
     return {
         startDate:"2016-07-01",
         endDate: moment().format("YYYY-MM-DD"),
-        ytd: 30000
+        ytd: 30000, 
+        base: 0,
+        payPeriod: "52",
+        employmentType: "f",
+        last:0,
+        lastMonths:12
     }
   },
   computed: {
@@ -83,6 +170,10 @@ li {
 a {
   color: #42b983;
 }
+
+/*.md-input-container{
+    width:120px;
+}*/
 
 .md-input-disabled > input{
     color:black!important;
