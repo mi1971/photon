@@ -12,14 +12,14 @@
                     <td>
                         <md-input-container>
                             <label>Start Date</label>
-                            <md-input type="date" v-model="startDate"></md-input>
+                            <md-input type="date" v-model="jobStart"></md-input>
                         </md-input-container>
                     </td>
                     <td><div style="width:40px">to</div></td>
                     <td>
                         <md-input-container>
                             <label>End Date</label>
-                            <md-input type="date" v-model="endDate"></md-input>
+                            <md-input type="date" v-model="endPay"></md-input>
                         </md-input-container>
                     </td>
                 </tr>
@@ -76,12 +76,12 @@
                             <md-input type="number" v-model="last"></md-input>
                         </md-input-container>
                     </td>
-                    <td>over</td>
+                    <td></td>
                     <td>
-                                    <md-input-container>
+                                    <!--<md-input-container>
                             <label>Months</label>
                             <md-input type="number" v-model="lastMonths"></md-input>
-                        </md-input-container>
+                        </md-input-container>-->
                     </td>
                 </tr>
             </table>
@@ -98,13 +98,21 @@
             <!--Right Column-->
             <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100" md-flex-large="70" style="margin-bottom:20px;padding:20px;">
                 <div>
-                    There are {{days}} days between {{startString}} and {{endString}}.<br/>Annualised income is <strong>{{annualised | currency('$',0) }}</strong>
+                    There are {{currentDays}} days between {{sofy | ddmmyy}} and {{endPay | ddmmyy}}.<br/>Annualised income is <strong>{{currentAnnualised | currency('$',0) }}</strong>
                 </div>
 
                 <div v-if="base">
                     <br> Base income is <strong>{{base * payPeriod | currency('$',0)}}</strong>
-                    <br> Overtime/Allowances will be <strong>{{annualised - (base * payPeriod) | currency('$',0) }}</strong>
+                    <br> Overtime/Allowances will be <strong>{{currentAnnualised - (base * payPeriod) | currency('$',0) }}</strong>
                 </div>
+
+                <div v-if="last">
+                    <br> Last year worked {{prevDays}} days, annualising to <strong>{{prevAnnualised | currency('',0)}}</strong>
+                </div>
+                <div>
+                    <br>Started job {{jobMonths}} months ago.
+                </div>
+                
 
             </md-layout>
         </md-layout>     
@@ -120,8 +128,9 @@ export default {
   name: 'income',
   data () {
     return {
-        startDate:"2016-07-01",
-        endDate: moment().format("YYYY-MM-DD"),
+        jobStart:"2015-07-01",
+        endPay: moment().format("YYYY-MM-DD"),
+        sofy: "2016-07-01",
         ytd: 30000, 
         base: 0,
         payPeriod: "52",
@@ -131,21 +140,38 @@ export default {
     }
   },
   computed: {
-      days: function(){
-        let startDate = moment(this.startDate);
-        let endDate = moment(this.endDate);
-        return endDate.diff(startDate, 'days');
-      }, 
-      startString: function() {
-          return moment(this.startDate).format("DD/MM/YY");
-      }, 
-      endString: function() {
-          return moment(this.endDate).format("DD/MM/YY");
+      currentStart: function(){
+        if(this.jobStart > this.sofy)
+            return this.jobStart;
+        else
+            return this.sofy;    
       },
-      annualised: function() {
-          return this.ytd / this.days * 365;
+      prevStart: function(){
+        if(this.jobStart > this.sofy)
+            return this.sofy;
+        else
+            return this.jobStart;    
+      },
+      currentDays: function(){
+        let currentStart = moment(this.currentStart);
+        let endPay = moment(this.endPay);
+        return endPay.diff(currentStart, 'days');
+      }, 
+      prevDays: function(){
+        let prevStart = moment(this.prevStart);
+        let prevEnd = moment(this.sofy);
+        return prevEnd.diff(prevStart, 'days');
+      },       
+      currentAnnualised: function() {
+          return this.ytd / this.currentDays * 365;
+      },
+      prevAnnualised: function() {
+          return this.last / this.prevDays * 365;
+      },
+      jobMonths: function(){
+        let start = moment(this.jobStart);
+        return (moment().diff(start, 'days') / 30).toFixed(1);
       }
-
   }
 
 }

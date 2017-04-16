@@ -6,6 +6,7 @@ import router from './router'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 import Vue2Filters from 'vue2-filters'
+import moment from 'moment'
 
  
 Vue.use(Vue2Filters)
@@ -14,6 +15,12 @@ Vue.use(VueMaterial)
 
 Vue.config.productionTip = false
 
+Vue.filter('ddmmyy', function(value){
+    console.log('In ddmmyy filter')
+    return moment(value).format("DD/MM/YY");
+});
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -21,3 +28,5 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+
+
