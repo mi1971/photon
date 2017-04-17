@@ -103,7 +103,7 @@
 
                 <div v-if="base">
                     <br> Base income is <strong>{{base * payPeriod | currency('$',0)}}</strong>
-                    <br> Overtime/Allowances will be <strong>{{currentAnnualised - (base * payPeriod) | currency('$',0) }}</strong>
+                    <br> Overtime/Allowances will be <strong>{{currentAnnualised - (baseAnnualised) | currency('$',0) }}</strong>
                 </div>
 
                 <div v-if="last">
@@ -111,6 +111,10 @@
                 </div>
                 <div>
                     <br>Started job {{jobMonths}} months ago.
+                </div>
+
+                <div v-for="warning in warnings">
+                    <br><span class="label-warning">Warning</span> {{warning}}
                 </div>
                 
 
@@ -140,6 +144,9 @@ export default {
     }
   },
   computed: {
+      baseAnnualised: function(){
+          return this.base * this.payPeriod;
+      },
       currentStart: function(){
         if(this.jobStart > this.sofy)
             return this.jobStart;
@@ -171,6 +178,31 @@ export default {
       jobMonths: function(){
         let start = moment(this.jobStart);
         return (moment().diff(start, 'days') / 30).toFixed(1);
+      },
+      warnings: function(){
+          let warnings = [];
+
+
+          if(this.baseAnnualised > this.currentAnnualised ) {
+            let shortfall = this.baseAnnualised - this.currentAnnualised;
+            let msg = "YTD Annualises to less than base income by "
+            msg = msg + NumberHelpers.formatCommas(shortfall) + "."
+            if(shortfall < 3000)
+                msg += " This may be explained by a pay raise?";
+            else
+                msg += " This is significant and requires explanation.";
+            warnings.push(msg);
+
+          }  
+
+          let diff = this.currentAnnualised - this.prevAnnualised;
+          if (this.last && diff / this.currentAnnualised * 100 > 10) {
+              let msg = "There is more than 10% variance from last year to this year. Requires explanation.";
+              warnings.push(msg);
+          }
+
+
+          return warnings;
       }
   }
 
@@ -209,6 +241,15 @@ a {
 /*.md-input-disabled */
 .md-input-container::after{
     background-image:none!important;
+}
+
+.label-warning{
+    background-color: #DF0101;
+    color:white;
+    padding: 1px 4px 1px 4px;
+    font-size:0.8em;
+    font-weight:bold;
+    border-radius:10%;
 }
 
 
