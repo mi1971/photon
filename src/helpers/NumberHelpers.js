@@ -154,7 +154,9 @@ export default class {
         *        0: end of the period, e.g. end of month (default)
         *        1: beginning of period
         */
-        var pmt, pvif;
+        
+
+        
 
         fv || (fv = 0);
         type || (type = 0);
@@ -162,13 +164,14 @@ export default class {
         if (ir === 0)
             return -(pv + fv)/np;
 
+        let pvif = Math.pow(1 + ir, np);
         pvif = Math.pow(1 + ir, np);
-        pmt = - ir * pv * (pvif + fv) / (pvif - 1);
+        let pmt = - ir * pv * (pvif + fv) / (pvif - 1);
 
         if (type === 1)
             pmt /= (1 + ir);
 
         return pmt;
-    }     
+    }    
     
 }

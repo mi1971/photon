@@ -195,7 +195,7 @@ export default {
 
           }  
 
-          let diff = this.currentAnnualised - this.prevAnnualised;
+          let diff = Math.abs(this.currentAnnualised - this.prevAnnualised);
           if (this.last && diff / this.currentAnnualised * 100 > 10) {
               let msg = "There is more than 10% variance from last year to this year. Requires explanation.";
               warnings.push(msg);
@@ -244,8 +244,10 @@ a {
 }
 
 .label-warning{
+
     background-color: #DF0101;
     color:white;
+    margin-right:1px;
     padding: 1px 4px 1px 4px;
     font-size:0.8em;
     font-weight:bold;

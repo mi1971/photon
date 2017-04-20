@@ -160,7 +160,7 @@ export default {
   methods: {
     calcRepayment: function () {
         let rate = this.rate/12/100;
-        let repayment = NumberHelpers.pmt(rate, this.years * 12, this.amount, 0-this.future)
+        let repayment = NumberHelpers.pmt(rate, this.years * 12, this.amount, this.future, 0)
         repayment = repayment / parseFloat(this.frequency);
         this.repayment = 0-repayment.toFixed(0);
     },
@@ -172,7 +172,7 @@ export default {
     calcYears: function () {
         let monthlyPayment = this.repayment * parseFloat(this.frequency);
         let rate = this.rate/12/100;
-        let months = NumberHelpers.nPer(rate, monthlyPayment, 0-this.amount, 0-this.future, 0);
+        let months = NumberHelpers.nPer(rate, monthlyPayment, 0-this.amount, this.future, 0);
         this.years = (parseFloat(months) / 12).toFixed(1);
     },
     calcAmount: function () {
