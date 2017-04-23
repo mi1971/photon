@@ -4,6 +4,7 @@ import Hello from '@/components/Hello'
 import Compare from '@/components/Compare'
 import Repayments from '@/components/Repayments'
 import Income from '@/components/Income'
+import Contacts from '@/components/Contacts'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/income',
       name: 'Income',
       component: Income
+    },
+    {
+      path: '/contacts',
+      name: 'Contacts',
+      component: Contacts
     }
   ]
 })

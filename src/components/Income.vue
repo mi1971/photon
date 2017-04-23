@@ -11,14 +11,14 @@
                 <tr>
                     <td>
                         <md-input-container>
-                            <label>Start Date</label>
+                            <label>Commenced Work</label>
                             <md-input type="date" v-model="jobStart"></md-input>
                         </md-input-container>
                     </td>
                     <td><div style="width:40px">to</div></td>
                     <td>
                         <md-input-container>
-                            <label>End Date</label>
+                            <label>Last Pay Date</label>
                             <md-input type="date" v-model="endPay"></md-input>
                         </md-input-container>
                     </td>
