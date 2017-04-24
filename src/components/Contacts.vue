@@ -10,6 +10,9 @@
             <!--Right Column-->
             <md-layout md-flex-xsmall="100" md-flex-small="100" md-flex-medium="30" md-flex-large="25">
             <div style="width:100%" class="phone-viewportx">
+
+                <div v-if="!this.activeContact">
+
             <md-list class="md-double-line">
 
                 <md-input-container>
@@ -17,79 +20,41 @@
                     <md-input placeholder="Search..."></md-input>
                 </md-input-container>
 
-                <md-list-item>
+                <div v-for="contact in contacts" :key="contact.id" @click="showContact(contact)"> 
+                <md-list-item>  
+                     
                 <md-avatar>
-                    <img src="https://placeimg.com/40/40/people/8" alt="People">
+                    <img :src="contact.imageUrl" alt="People">
                 </md-avatar>                
 
                 <div class="md-list-text-container">
-                    <span>Michael Smith</span>
-                    <span>0418 776 543</span>
+                    <span>{{contact.firstName}} {{contact.lastName}}</span>
+                    <span>{{contact.mobile}}</span>
                 </div>
-
-                <md-button class="md-icon-button md-list-action">
-                    <md-icon>sms</md-icon>
-                </md-button>
-                </md-list-item>
-                
+               
                 <md-divider></md-divider>
-
-                <md-list-item>
-
-                <md-avatar>
-                    <img src="https://placeimg.com/40/40/people/4" alt="People">
-                </md-avatar>  
-
-                <div class="md-list-text-container">
-                    <span>Al McManphringsington</span>
-                    <span>0451 870 225</span>
+                 </md-list-item>
                 </div>
-
-                <md-divider></md-divider>
-                </md-list-item>
-
-                <md-list-item>
-
-                <md-avatar>
-                    <img src="https://placeimg.com/40/40/people/2" alt="People">
-                </md-avatar>  
-
-                <div class="md-list-text-container">
-                    <span>Hamilton Ireland</span>
-                    <span>0477 998 234</span>
-                </div>
-                </md-list-item>
-
-                <md-divider></md-divider>
-
-                <md-list-item>
-
-                <md-avatar>
-                    <img src="https://placeimg.com/40/40/people/7" alt="People">
-                </md-avatar>  
-
-                <div class="md-list-text-container">
-                    <span>June Citizen</span>
-                    <span>0477 663 009</span>
-                </div>
-                </md-list-item>
-
-                <md-divider></md-divider>
-
-                <md-list-item>
-
-                <md-avatar>
-                    <img src="https://placeimg.com/40/40/people/5" alt="People">
-                </md-avatar>  
-
-                <div class="md-list-text-container">
-                    <span>Jonathan Citizen</span>
-                    <span>0477 663 009</span>
-                </div>
-                </md-list-item>
-
 
             </md-list>
+            </div>
+
+            <div v-if="this.activeContact">
+            
+                        <md-input-container>
+                            <label>First Name</label>
+                            <md-input type="text" v-model="activeContact.firstName"></md-input>
+                        </md-input-container>            
+                        <md-input-container>
+                            <label>Last Name</label>
+                            <md-input type="text" v-model="activeContact.lastName"></md-input>
+                        </md-input-container>            
+                        <md-input-container>
+                            <label>Mobile</label>
+                            <md-input type="text" v-model="activeContact.mobile"></md-input>
+                        </md-input-container>  
+                        <md-button class="md-raised md-primary" @click.native="hideContact()">Done</md-button>          
+                    </div>
             </div>                
             </md-layout>
 
@@ -104,6 +69,36 @@
         name: 'Contacts',
         data() {
             return {
+                activeContact:null,
+                contacts:[
+                    {
+                        id:"1",
+                        firstName: "Al", 
+                        lastName: "McManphringsington", 
+                        mobile: "0413 9999 51",
+                        imageUrl: "https://placeimg.com/40/40/people/4"
+                    },
+                    {
+                        id:"2",
+                        firstName: "Mary", 
+                        lastName: "Jepperson", 
+                        mobile: "0413 995 777",
+                        imageUrl: "https://placeimg.com/40/40/people/2"
+                    },                    
+                    {   id:"3",
+                        firstName: "Mick", 
+                        lastName: "Anderson", 
+                        mobile: "0413 008 534",
+                        imageUrl: "https://placeimg.com/40/40/people/5"
+                    },                    
+                    {
+                        id:"4",
+                        firstName: "Fran", 
+                        lastName: "Moore", 
+                        mobile: "0400 494 177",
+                        imageUrl: "https://placeimg.com/40/40/people/6"
+                    },                    
+                ]
 
             }
         },
@@ -111,6 +106,13 @@
 
         },
         methods: {
+            showContact: function(contact){
+                this.activeContact = contact;
+            },
+            hideContact: function(){
+                console.log('done')
+                this.activeContact = null;
+            }
 
         }
     }
@@ -120,6 +122,9 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.md-list-item:hover {background-color:#FAFAFA!important}
+.md-list-item:hover {
+    background-color:#FAFAFA;
+    cursor:pointer;
+}
 
 </style>
