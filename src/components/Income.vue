@@ -71,17 +71,21 @@
                 </tr>
                 <tr>
                     <td>
-                                                <md-input-container>
+                        <md-input-container>
                             <label>Last Year Income</label>
                             <md-input type="number" v-model="last"></md-input>
                         </md-input-container>
                     </td>
-                    <td></td>
                     <td>
-                                    <!--<md-input-container>
-                            <label>Months</label>
-                            <md-input type="number" v-model="lastMonths"></md-input>
-                        </md-input-container>-->
+                      
+                    </td>
+                    <td>
+                        <md-input-container>
+                            <label for="lender">Lender</label>
+                            <md-select name="lender" id="lender"  v-model="lender">
+                                <md-option v-for="lenderName in lenders" :value="lenderName" :key="lender">{{lenderName}}</md-option>
+                            </md-select>
+                        </md-input-container>  
                     </td>
                 </tr>
             </table>
@@ -97,6 +101,17 @@
 
             <!--Right Column-->
             <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100" md-flex-large="70" style="margin-bottom:20px;padding:20px;">
+                
+                <div v-for="item in output" class="output-item">   
+                    <md-icon class="green md-size-2x pull-left">{{getIconName(item.icon)}}</md-icon>
+                    <div style="margin-left:55px">
+                    <div><strong>{{item.heading}}</strong></div>
+                    <div class="grey">{{item.message}}</div>
+                    </div>
+                </div>
+                
+                
+                
                 <div>
                     There are {{currentDays}} days between {{sofy | ddmmyy}} and {{endPay | ddmmyy}}.<br/>Annualised income is <strong>{{currentAnnualised | currency('$',0) }}</strong>
                 </div>
@@ -125,6 +140,7 @@
 
 <script>
 import NumberHelpers from '../helpers/NumberHelpers.js';
+import LenderHelpers from '../helpers/LenderHelpers.js';
 import moment from 'moment';
     
 
@@ -140,7 +156,10 @@ export default {
         payPeriod: "52",
         employmentType: "f",
         last:0,
-        lastMonths:12
+        lastMonths:12,
+        lenders: LenderHelpers.lenders(),
+        lender: '',
+        output: []
     }
   },
   computed: {
@@ -203,7 +222,63 @@ export default {
 
 
           return warnings;
+      },
+      watchable:function(){
+        this.jobStart,
+        this.endPay,
+        this.ytd, 
+        this.base,
+        this.payPeriod,
+        this.employmentType,
+        this.last,
+        this.lastMonths,
+        this.lender         
+        return Date.now();
       }
+    
+      
+  },
+  watch:{
+    watchable() {
+        this.calculateOutput()
+    }
+  },
+  methods: {
+      calculateOutput: function(){
+        //   debugger;
+          this.output = [];
+          var outputItem = {};
+          if(this.lender == "ANZ") {
+              if(this.employmentType == "c"){
+                if(this.jobMonths < 3) {
+                    outputItem.icon = "Error",
+                    outputItem.heading = "Length of Employment",
+                    outputItem.message = "ANZ's minimum length of employment is 3 months for casual. This deal is " + this.jobMonths + " months."
+                    this.output.push(outputItem);
+                } 
+                else {
+                    outputItem.icon = "Success",
+                    outputItem.heading = "Length of Employment",
+                    outputItem.message = "ANZ's minimum length of employment is 3 months for casual. This deal is " + this.jobMonths + " months."
+                    this.output.push(outputItem);                    
+                }
+              }
+
+           
+          }
+
+      },
+      getIconName: function(iconType){
+          if(iconType == "Error")
+            return "error";
+          if(iconType == "Success")
+            return "check_circle";            
+          
+        
+      }
+  },
+  created(){
+      console.log(this.lenders)
   }
 
 }
@@ -254,6 +329,10 @@ a {
     border-radius:10%;
 }
 
+.output-item{
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 
 

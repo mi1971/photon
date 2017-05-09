@@ -81,4 +81,17 @@ a:hover{
     color:white!important;
 }
 
+
+.correct, .green{
+    color:green;
+}
+
+.pull-left{
+    float:left!important;
+}
+
+.grey{
+    color:grey;
+}
+
 </style>

@@ -16,7 +16,6 @@ Vue.use(VueMaterial)
 Vue.config.productionTip = false
 
 Vue.filter('ddmmyy', function(value){
-    console.log('In ddmmyy filter')
     return moment(value).format("DD/MM/YY");
 });
 
