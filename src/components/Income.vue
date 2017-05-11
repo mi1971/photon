@@ -88,6 +88,17 @@
                         </md-input-container>  
                     </td>
                 </tr>
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                      
+                    </td>
+                    <td> 
+                        <md-checkbox v-model="lmi" class="md-primary">LMI Loan</md-checkbox>
+                    </td>
+                </tr>                
             </table>
 
         
@@ -103,33 +114,11 @@
             <md-layout md-column md-flex-xsmall="100" md-flex-small="100" md-flex-medium="100" md-flex-large="70" style="margin-bottom:20px;padding:20px;">
                 
                 <div v-for="item in output" class="output-item">   
-                    <md-icon class="green md-size-2x pull-left">{{getIconName(item.icon)}}</md-icon>
+                    <md-icon :class="getIcon(item.icon).color" class="md-size-2x pull-left">{{getIcon(item.icon).name}}</md-icon>
                     <div style="margin-left:55px">
                     <div><strong>{{item.heading}}</strong></div>
                     <div class="grey">{{item.message}}</div>
                     </div>
-                </div>
-                
-                
-                
-                <div>
-                    There are {{currentDays}} days between {{sofy | ddmmyy}} and {{endPay | ddmmyy}}.<br/>Annualised income is <strong>{{currentAnnualised | currency('$',0) }}</strong>
-                </div>
-
-                <div v-if="base">
-                    <br> Base income is <strong>{{base * payPeriod | currency('$',0)}}</strong>
-                    <br> Overtime/Allowances will be <strong>{{currentAnnualised - (baseAnnualised) | currency('$',0) }}</strong>
-                </div>
-
-                <div v-if="last">
-                    <br> Last year worked {{prevDays}} days, annualising to <strong>{{prevAnnualised | currency('',0)}}</strong>
-                </div>
-                <div>
-                    <br>Started job {{jobMonths}} months ago.
-                </div>
-
-                <div v-for="warning in warnings">
-                    <br><span class="label-warning">Warning</span> {{warning}}
                 </div>
                 
 
@@ -159,6 +148,7 @@ export default {
         lastMonths:12,
         lenders: LenderHelpers.lenders(),
         lender: '',
+        lmi: false,
         output: []
     }
   },
@@ -189,39 +179,20 @@ export default {
         return prevEnd.diff(prevStart, 'days');
       },       
       currentAnnualised: function() {
-          return this.ytd / this.currentDays * 365;
+          let multiplier = 1
+          if(this.employmentType == "c")
+             multiplier = this.getCasualWeeksPerAnnum(this.lender) / 52
+          return this.ytd / this.currentDays * 365 * multiplier
       },
       prevAnnualised: function() {
-          return this.last / this.prevDays * 365;
+          let multiplier = 1
+          if(this.employmentType == "c")
+            multiplier = this.getCasualWeeksPerAnnum(this.lender) / 52
+          return this.last / this.prevDays * 365 * multiplier
       },
       jobMonths: function(){
         let start = moment(this.jobStart);
         return (moment().diff(start, 'days') / 30).toFixed(1);
-      },
-      warnings: function(){
-          let warnings = [];
-
-
-          if(this.baseAnnualised > this.currentAnnualised ) {
-            let shortfall = this.baseAnnualised - this.currentAnnualised;
-            let msg = "YTD Annualises to less than base income by "
-            msg = msg + NumberHelpers.formatCommas(shortfall) + "."
-            if(shortfall < 3000)
-                msg += " This may be explained by a pay raise?";
-            else
-                msg += " This is significant and requires explanation.";
-            warnings.push(msg);
-
-          }  
-
-          let diff = Math.abs(this.currentAnnualised - this.prevAnnualised);
-          if (this.last && diff / this.currentAnnualised * 100 > 10) {
-              let msg = "There is more than 10% variance from last year to this year. Requires explanation.";
-              warnings.push(msg);
-          }
-
-
-          return warnings;
       },
       watchable:function(){
         this.jobStart,
@@ -245,40 +216,101 @@ export default {
   },
   methods: {
       calculateOutput: function(){
-        //   debugger;
           this.output = [];
-          var outputItem = {};
-          if(this.lender == "ANZ") {
-              if(this.employmentType == "c"){
-                if(this.jobMonths < 3) {
-                    outputItem.icon = "Error",
-                    outputItem.heading = "Length of Employment",
-                    outputItem.message = "ANZ's minimum length of employment is 3 months for casual. This deal is " + this.jobMonths + " months."
-                    this.output.push(outputItem);
-                } 
-                else {
-                    outputItem.icon = "Success",
-                    outputItem.heading = "Length of Employment",
-                    outputItem.message = "ANZ's minimum length of employment is 3 months for casual. This deal is " + this.jobMonths + " months."
-                    this.output.push(outputItem);                    
-                }
-              }
 
-           
+          //Annualised Income...
+          
+          let outputItem = {};
+          outputItem.heading = `Annualised Income is ${NumberHelpers.formatCommas(this.currentAnnualised)}`
+          if(this.employmentType == 'c')
+            outputItem.message = `This is based on ${this.lender} policy annualising over ${this.getCasualWeeksPerAnnum(this.lender)} weeks.`
+          else
+            outputItem.message = `This is based on annualising ${this.currentDays} days.`
+          outputItem.icon = "Success"
+          this.output.push(outputItem)
+
+          //Minimum Employment Term...
+          
+          outputItem = {};
+
+          let minimumEmploymentTerm = this.getMinimumEmploymentTerm(this.lender, this.employmentType, this.lmi)
+          outputItem.message = `The ${this.lender} minimum length of employment is ${minimumEmploymentTerm} months. This deal is ${this.jobMonths} months.`
+          outputItem.heading = "Length of Employment"
+
+          if(minimumEmploymentTerm > this.jobMonths)
+              outputItem.icon = "Error"
+          else
+              outputItem.icon = "Success"
+          this.output.push(outputItem);
+
+          //Consistency of Base Income...
+
+          outputItem = {}
+          let isConsistent = true
+          outputItem.heading = "Consistency of Income"
+          let shortfall = this.baseAnnualised - this.currentAnnualised;
+          if(shortfall > 0) {
+            outputItem.message = `YTD Annualises to less than base income by ${NumberHelpers.formatCommas(shortfall)}.`
+            if(shortfall < 3000)
+                outputItem.message += " This may be explained by a pay raise?"
+            else
+                outputItem.message += " This is significant and requires explanation."
+            isConsistent = false
+          }  
+          else {
+            outputItem.message = `YTD Annualises to more than base income by ${NumberHelpers.formatCommas(Math.abs(shortfall))}.`
           }
 
-      },
-      getIconName: function(iconType){
-          if(iconType == "Error")
-            return "error";
-          if(iconType == "Success")
-            return "check_circle";            
-          
+          let diff = Math.abs(this.currentAnnualised - this.prevAnnualised);
+          if (this.last && diff / this.currentAnnualised * 100 > 10) {
+              outputItem.message += " There is more than 10% variance from last year to this year. Requires explanation.";
+              isConsistent = false
+          } else
+            outputItem.message += " Income is consistent with last year."
+
+          if(!isConsistent)
+            outputItem.icon = "Error"
+          else
+            outputItem.icon = "Success"
+
+          this.output.push(outputItem)      
         
+      },
+      getIcon: function(iconType){
+          if(iconType == "Error")
+            return {name:"error", color:"red"}
+          if(iconType == "Success")
+            return {name:"check_circle", color:"green"}            
+      },
+      getMinimumEmploymentTerm: function(lender, employmentType, lmi) {
+          if(employmentType == "c") {
+              if(['ANZ', 'CBA', 'NAB'].includes(lender))
+                 return 3
+              else if(['CUA', 'ING', 'Suncorp'].includes(lender))
+                return 6
+               else 
+                  return 12
+              
+
+          } else {
+              if(['ANZ', 'CBA'].includes(lender))
+                return 1
+              else
+                return 6
+
+          }
+      },
+      getCasualWeeksPerAnnum(lender){
+          if(['Westpac'].includes(lender)) 
+            return 46
+          else if (['ANZ', 'CBA'].includes(lender))
+            return 52
+          else
+            return 48
       }
   },
   created(){
-      console.log(this.lenders)
+      this.calculateOutput()
   }
 
 }

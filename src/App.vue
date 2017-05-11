@@ -6,7 +6,7 @@
           <md-icon>menu</md-icon>
         </md-button>
 
-        <h2 class="md-title">Calculators</h2>
+        <h2 class="md-title">{{appTitle}}</h2>
       </md-toolbar>
 
       <md-sidenav class="md-left md-sidenav" ref="leftSidenav" @click.native="toggleLeftSidenav">
@@ -33,14 +33,25 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'app',
   methods: {
     toggleLeftSidenav() {
       this.$refs.leftSidenav.toggle();
     }
+  },
+  computed: {
+    appTitle: function(){
+        return window.appTitle;
+    }
   }
 }
+
+window.appTitle = "Calculators"
+
+
 </script>
 
 <style>
@@ -84,6 +95,9 @@ a:hover{
 
 .correct, .green{
     color:green;
+}
+.incorrect, .red{
+    color: #FA5858;
 }
 
 .pull-left{
