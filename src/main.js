@@ -6,6 +6,7 @@ import router from './router'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 import Vue2Filters from 'vue2-filters'
+import NumberHelpers from './helpers/NumberHelpers.js'
 import moment from 'moment'
 
  
@@ -17,6 +18,10 @@ Vue.config.productionTip = false
 
 Vue.filter('ddmmyy', function(value){
     return moment(value).format("DD/MM/YY");
+});
+
+Vue.filter('number', function(value){
+    return NumberHelpers.formatCommas(value)
 });
 
 

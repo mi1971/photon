@@ -108,4 +108,8 @@ a:hover{
     color:grey;
 }
 
+.light-grey{
+    color: lightgrey;
+}
+
 </style>
