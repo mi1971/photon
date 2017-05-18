@@ -29,7 +29,7 @@
                         <td>
                             <md-input-container>
                                 <label>YTD Income</label>
-                                <md-input type="number" v-model="ytd"></md-input>
+                                <md-input type="tel" v-model="ytd"></md-input>
                             </md-input-container>
                         </td>
                         <td></td>
@@ -51,7 +51,7 @@
                         <td>
                             <md-input-container>
                                 <label>Base Earnings</label>
-                                <md-input type="number" v-model="base"></md-input>
+                                <md-input type="tel" v-model="base"></md-input>
                             </md-input-container>
                         </td>
                         <td> per </td>
@@ -75,7 +75,7 @@
                         <td>
                             <md-input-container>
                                 <label>Last Year Income</label>
-                                <md-input type="number" v-model="last"></md-input>
+                                <md-input type="tel" v-model="last"></md-input>
                             </md-input-container>
                         </td>
                         <td>
@@ -232,10 +232,11 @@ computed: {
     overtimeFinal:function(){
         let result = 0
         let msg = '';
+        this.overtimeMessage = '';
         if (this.employmentType == 'c')
             result = 0
-        else if (['ANZ', 'CBA'].includes(this.lender)) {
-            msg = " Overtime is based on this year annualised less base."
+        else if (this.monthsRequiredForOvertime <= this.currentDays / 30) {
+            msg = " Using annualised less base (since more than " + this.monthsRequiredForOvertime + " months is demonstrated."
             result = this.currentOvertime
         } else {
             msg = " Overtime is based on the lower of last year vs this year."
@@ -275,6 +276,14 @@ computed: {
             return 52
         else
             return 48
+    },
+    monthsRequiredForOvertime: function () {
+        if (['ANZ', 'CBA', 'St George'].includes(this.lender))
+            return 3
+        else if (['CUA', 'Heritage', 'NAB'].includes(this.lender))
+            return 6
+        else
+            return 12
     },
     output: function () {
         this.jobStart,
