@@ -148,6 +148,7 @@ data() {
         jobStart: "2015-07-01",
         endPay: moment().format("YYYY-MM-DD"),
         sofy: "2016-07-01",
+        sopfy: "2015-07-01",
         ytd: 30000,
         base: 0,
         payPeriod: "52",
@@ -197,6 +198,8 @@ computed: {
     prevStart: function () {
         if (this.jobStart > this.sofy)
             return this.sofy;
+        else if (this.jobStart < this.sopfy)
+            return this.sopfy;
         else
             return this.jobStart;
     },
@@ -207,6 +210,9 @@ computed: {
     },
     prevDays: function () {
         let prevStart = moment(this.prevStart);
+        let sopfy = moment(this.sopfy);
+        if(prevStart < sopfy)
+            prevStart = sopfy;
         let prevEnd = moment(this.sofy);
         return prevEnd.diff(prevStart, 'days')
     },

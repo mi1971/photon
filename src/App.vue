@@ -25,6 +25,7 @@
         <router-link class='router-link' to="/compare">Compare Loans</router-link>
         <router-link class='router-link' to="/income">Income</router-link>
         <router-link class='router-link' to="/contacts">Contacts (testing)</router-link>
+        <router-link class='router-link' to="/transactions">Transactions (testing)</router-link>
 
       </md-sidenav>
       </div>
